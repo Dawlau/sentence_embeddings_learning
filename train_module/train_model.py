@@ -8,7 +8,6 @@ import torch
 CHECKPOINT_PATH = os.path.join("saved_models")
 NUM_EPOCHS = 20
 device = "cuda" if torch.cuda.is_available() else "cpu"
-print(device)
 
 def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
     trainer = pl.Trainer(
