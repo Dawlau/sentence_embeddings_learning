@@ -4,6 +4,7 @@ from train_module.train_pl_module import SNLIModule
 import os
 import torch
 
+
 CHECKPOINT_PATH = os.path.join("saved_models")
 NUM_EPOCHS = 20
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -56,3 +57,5 @@ def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
     }
 
     return model, result
+
+
