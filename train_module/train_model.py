@@ -8,7 +8,7 @@ import torch
 CHECKPOINT_PATH = os.path.join("saved_models")
 NUM_EPOCHS = 20
 device = "cuda" if torch.cuda.is_available() else "cpu"
-
+print(device)
 
 def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
     trainer = pl.Trainer(
@@ -26,7 +26,7 @@ def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
         enable_progress_bar=True
     )
 
-    train_loader, validation_loader, test_loader = data_loaders
+    train_loader, validation_loader = data_loaders
 
     trainer.logger._log_graph = True
     trainer.logger._default_hp_metric = None
@@ -44,18 +44,3 @@ def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
             **kwargs
         )
         trainer.fit(model, train_loader, validation_loader)
-        model = SNLIModule.load_from_checkpoint(
-            trainer.checkpoint_callback.best_model_path)
-
-    # Test best model on validation and test set
-    val_result = trainer.test(model, validation_loader, verbose=False)
-    test_result = trainer.test(model, test_loader, verbose=False)
-
-    result = {
-        "test": test_result[0]["test_acc"],
-        "val": val_result[0]["test_acc"]
-    }
-
-    return model, result
-
-

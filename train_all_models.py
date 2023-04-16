@@ -7,7 +7,7 @@ import os
 
 GLOVE_PATH = os.path.join("glove", "glove.840B.300d.txt")
 BATCH_SIZE = 64
-NUM_WORKERS = 8
+NUM_WORKERS = 6
 MODELS_CONFIG = {
     "BaselineEncoder": {
         "output_size": 1200,
@@ -34,7 +34,6 @@ def train_all_models():
 
     train_dataset = SNLIDataset("train", glove_vocab_index_mapping)
     validation_dataset = SNLIDataset("validation", glove_vocab_index_mapping)
-    test_dataset = SNLIDataset("test", glove_vocab_index_mapping)
 
     train_loader = DataLoader(
         train_dataset,
@@ -46,12 +45,7 @@ def train_all_models():
     validation_loader = DataLoader(
         validation_dataset,
         batch_size=BATCH_SIZE,
-        num_workers=NUM_WORKERS
-    )
-
-    test_loader = DataLoader(
-        test_dataset,
-        batch_size=BATCH_SIZE,
+        shuffle=True,
         num_workers=NUM_WORKERS
     )
 
@@ -60,7 +54,7 @@ def train_all_models():
 
         train_model(
             model_name,
-            data_loaders=[train_loader, validation_loader, test_loader],
+            data_loaders=[train_loader, validation_loader],
             glove_embeddings=glove_embeddings,
             num_embeddings=glove_embeddings.shape[0],
             embedding_dim=glove_embeddings.shape[1],
