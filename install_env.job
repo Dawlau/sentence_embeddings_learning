@@ -14,6 +14,4 @@ module load 2022
 module load Anaconda3/2022.05
 
 cd $HOME/sentence_embeddings_learning
-conda env create -n atcs python=3.10
-conda activate atcs
-pip install -r requirements.txt
+conda env create -f env.yaml
