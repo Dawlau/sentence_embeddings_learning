@@ -1,11 +1,8 @@
 import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint
-from pytorch_lightning.callbacks import EarlyStopping
 from train_module.train_pl_module import SNLIModule
 import os
 import torch
-from dataset.snli import SNLIDataset
-from torch.utils.data import DataLoader
 
 CHECKPOINT_PATH = os.path.join("saved_models")
 NUM_EPOCHS = 20

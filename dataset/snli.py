@@ -1,7 +1,6 @@
 from torch.utils.data import Dataset
 from datasets import load_dataset
 import nltk
-from dataset.dataset_utils import get_glove_vocab_index_mapping
 import torch
 nltk.download("punkt", quiet=True)
 

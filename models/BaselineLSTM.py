@@ -1,5 +1,4 @@
 import torch.nn as nn
-import torch
 from models.BaselineEncoder import BaselineEncoder
 
 

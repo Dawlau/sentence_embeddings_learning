@@ -4,7 +4,6 @@ import torch.nn as nn
 import torch.optim as optim
 from models.Classifier import Classifier
 from models.utils import get_encoder
-import logging
 
 
 class SNLIModule(pl.LightningModule):
