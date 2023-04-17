@@ -27,7 +27,6 @@ def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
 
     train_loader, validation_loader = data_loaders
 
-    trainer.logger._log_graph = True
     trainer.logger._default_hp_metric = None
 
     # Check whether pretrained model exists. If yes, load it and skip training
