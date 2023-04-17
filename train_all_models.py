@@ -45,7 +45,6 @@ def train_all_models():
     validation_loader = DataLoader(
         validation_dataset,
         batch_size=BATCH_SIZE,
-        shuffle=True,
         num_workers=NUM_WORKERS
     )
 
