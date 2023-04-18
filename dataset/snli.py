@@ -9,6 +9,8 @@ class SNLIDataset(Dataset):
     def __init__(self, data_split, glove_mapping):
         self.data_split = data_split
         self.dataset = load_dataset("snli")[self.data_split]
+        self.dataset = [data for data in self.dataset if data["label"] != -1]
+        
         self.max_sentence_length = 0
         self.glove_vocab_index_mapping = glove_mapping
 
