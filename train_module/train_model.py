@@ -13,14 +13,20 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
+    if not os.path.isdir(CHECKPOINT_PATH):
+        os.mkdir(CHECKPOINT_PATH)
+
     encoder = get_encoder(
         encoder_name=model_name,
         num_embeddings=glove_embeddings.shape[0],
         embedding_dim=glove_embeddings.shape[1],
         bidirectional=kwargs["bidirectional"]
-    ).to(device)
+    )
 
-    classifier = Classifier(kwargs["encoder_output_size"]).to(device)
+    classifier = Classifier(kwargs["encoder_output_size"])
+
+    encoder.to(device)
+    classifier.to(device)
 
     optimizer = torch.optim.SGD(
         list(classifier.parameters()),
@@ -57,7 +63,8 @@ def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
         )
 
         if best_accuracy < validation_acc:
-            torch.save(os.path.join(CHECKPOINT_PATH, model_name))
+            torch.save(
+                encoder, os.path.join(CHECKPOINT_PATH, model_name) + ".pt")
             best_accuracy = validation_acc
 
         validation_accuracies[0] = validation_accuracies[1]
