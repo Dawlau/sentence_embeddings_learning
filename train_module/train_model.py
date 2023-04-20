@@ -7,39 +7,54 @@ import os
 import torch
 
 
-CHECKPOINT_PATH = os.path.join("saved_models")
-NUM_EPOCHS = 20
+SAVE_MODEL_PATH = os.path.join("saved_models")
 device = "cuda" if torch.cuda.is_available() else "cpu"
+device = "cpu"
 
 
-def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
-    if not os.path.isdir(CHECKPOINT_PATH):
-        os.mkdir(CHECKPOINT_PATH)
+def train_model(encoder_name, data_loaders, glove_embeddings,
+                bidirectional, encoder_output_size, hidden_size,
+                checkpoint_path, lr, weight_decay, num_epochs):
 
-    encoder = get_encoder(
-        encoder_name=model_name,
-        num_embeddings=glove_embeddings.shape[0],
-        embedding_dim=glove_embeddings.shape[1],
-        bidirectional=kwargs["bidirectional"]
-    )
+    if not os.path.isdir(SAVE_MODEL_PATH):
+        os.mkdir(SAVE_MODEL_PATH)
 
-    classifier = Classifier(kwargs["encoder_output_size"])
+    if checkpoint_path is not None:
+        encoder = torch.load(
+            os.path.join(checkpoint_path, encoder_name + ".pt")
+        )
+
+        classifier = torch.load(
+            os.path.join(checkpoint_path, f"{encoder_name}_classifier" + ".pt")
+        )
+    else:
+        encoder = get_encoder(
+            encoder_name=encoder_name,
+            num_embeddings=glove_embeddings.shape[0],
+            embedding_dim=glove_embeddings.shape[1],
+            hidden_size=hidden_size,
+            bidirectional=bidirectional
+        )
+
+        classifier = Classifier(encoder_output_size)
+
+    encoder.set_embeddings(glove_embeddings)
 
     encoder.to(device)
     classifier.to(device)
 
     optimizer = torch.optim.SGD(
-        list(classifier.parameters()),
-        lr=0.1
+        list(encoder.parameters()) + list(classifier.parameters()),
+        lr=lr
     )
     loss_fn = torch.nn.CrossEntropyLoss()
 
     writer = SummaryWriter()
-    validation_accuracies = [-1, -1]
 
+    last_validation_accuracy = -1
     best_accuracy = -1
 
-    for epoch in range(NUM_EPOCHS):
+    for epoch in range(num_epochs):
         print(f"Starting epoch {epoch}")
 
         train_loss, train_acc = train_step(
@@ -52,7 +67,7 @@ def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
         )
 
         optimizer.param_groups[0]["lr"] = \
-            0.99 * optimizer.param_groups[0]["lr"]
+            weight_decay * optimizer.param_groups[0]["lr"]
 
         validation_loss, validation_acc = validation_step(
             encoder=encoder,
@@ -64,14 +79,15 @@ def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
 
         if best_accuracy < validation_acc:
             torch.save(
-                encoder, os.path.join(CHECKPOINT_PATH, model_name) + ".pt")
+                encoder, os.path.join(SAVE_MODEL_PATH, encoder_name) + ".pt")
+            torch.save(
+                classifier, os.path.join(SAVE_MODEL_PATH, f"{encoder_name}_classifier") + ".pt")
             best_accuracy = validation_acc
 
-        validation_accuracies[0] = validation_accuracies[1]
-        validation_accuracies[1] = validation_acc
-
-        if validation_acc < validation_accuracies[0]:
+        if validation_acc < last_validation_accuracy:
             optimizer.param_groups[0]["lr"] /= 5
+
+        last_validation_accuracy = validation_acc
 
         writer.add_scalar('Loss/train', train_loss, epoch)
         writer.add_scalar('Loss/validation', validation_loss, epoch)
@@ -81,4 +97,5 @@ def train_model(model_name, data_loaders, glove_embeddings, **kwargs):
         print(f"Finished epoch {epoch}")
 
         if optimizer.param_groups[0]["lr"] < 1e-5:
+            print("Learning rate is below 1e-5. Stoping...")
             break

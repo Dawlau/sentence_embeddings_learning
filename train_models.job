@@ -15,4 +15,11 @@ module load Anaconda3/2022.05
 
 cd $HOME/sentence_embeddings_learning
 source activate atcs
-srun python -u train_all_models.py
+
+python train.py --encoder_name BaselineEncoder --encoder_output_size 1200
+
+python train.py --encoder_name BaselineLSTM --hidden_size 2048 --encoder_output_size 8192
+
+python train.py --encoder_name BiLSTM --hidden_size 2048 --encoder_output_size 16384 --lstm_bidirectional True
+
+python train.py --encoder_name MaxPoolingBiLSTM --hidden_size 2048 --lstm_bidirectional True --encoder_output_size 16384
