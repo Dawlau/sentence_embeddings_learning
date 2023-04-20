@@ -3,14 +3,14 @@ from models.BaselineEncoder import BaselineEncoder
 
 
 class BaselineLSTM(BaselineEncoder):
-    def __init__(self, num_embeddings, embedding_dim, padding_idx=1,
-                 bidirectional=False):
+    def __init__(self, num_embeddings, embedding_dim, hidden_size,
+                 padding_idx=1, bidirectional=False):
         super().__init__(num_embeddings, embedding_dim, padding_idx)
         self.lstm_layer = nn.LSTM(
             input_size=embedding_dim,
-            hidden_size=embedding_dim,
+            hidden_size=hidden_size,
             batch_first=True,
-            bidirectional=bidirectional
+            bidirectional=bidirectional,
         )
 
     def forward(self, x):

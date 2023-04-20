@@ -4,7 +4,7 @@ from models.MaxPoolingBiLSTM import MaxPoolingBiLSTM
 
 
 def get_encoder(encoder_name, num_embeddings,
-                embedding_dim, bidirectional=False):
+                embedding_dim, hidden_size=2048, bidirectional=False):
     if encoder_name == "BaselineEncoder":
         return BaselineEncoder(
             num_embeddings=num_embeddings,
@@ -14,11 +14,13 @@ def get_encoder(encoder_name, num_embeddings,
         return BaselineLSTM(
             num_embeddings=num_embeddings,
             embedding_dim=embedding_dim,
-            bidirectional=bidirectional
+            bidirectional=bidirectional,
+            hidden_size=hidden_size
         )
     else:
         return MaxPoolingBiLSTM(
             num_embeddings=num_embeddings,
             embedding_dim=embedding_dim,
-            bidirectional=bidirectional
+            bidirectional=bidirectional,
+            hidden_size=hidden_size
         )
