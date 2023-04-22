@@ -2,6 +2,18 @@ import numpy as np
 
 
 def get_glove_vocab_index_mapping(glove_path):
+    """
+    Returns a dictionary mapping words in the GloVe file to their corresponding
+    index in the vocabulary. The index of the padding token is 1, and the index
+    of the unknown token is 0.
+
+    Args:
+        glove_path (str): Path to the file containing GloVe embeddings.
+
+    Returns:
+        vocab (dict): Dictionary mapping words in the GloVe file to their
+            corresponding index in the vocabulary.
+    """
     with open(glove_path, "r") as r:
         lines = r.readlines()
         vocab = {
@@ -17,6 +29,15 @@ def get_glove_vocab_index_mapping(glove_path):
 
 
 def get_glove_embeddings(glove_path):
+    """
+    Returns a numpy array of GloVe embeddings.
+
+    Args:
+        glove_path (str): Path to the GloVe file.
+
+    Returns:
+        embeddings (numpy array): A numpy array of GloVe embeddings.
+    """
     embeddings = []
 
     with open(glove_path, "r") as r:

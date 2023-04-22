@@ -14,6 +14,26 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 def train_model(encoder_name, data_loaders, glove_embeddings,
                 bidirectional, encoder_output_size, hidden_size,
                 checkpoint_path, lr, weight_decay, num_epochs):
+    """
+    Trains a PyTorch model on the NLI task.
+
+    Args:
+        encoder_name (str): Name of the encoder model to use.
+        data_loaders (list of torch.utils.data.DataLoader): List of data
+            loaders, one for training and one for validation.
+        glove_embeddings (numpy.ndarray): Pre-trained GloVe embeddings.
+        bidirectional (bool): Whether to use a bidirectional encoder or not.
+        encoder_output_size (int): Output size of the encoder model.
+        hidden_size (int): Size of the LSTM hidden layers.
+        checkpoint_path (str or None): Path to a checkpoint file to load
+            encoder and classifier models from.
+        lr (float): Learning rate to use during training.
+        weight_decay (float): Weight decay to use during training.
+        num_epochs (int): Number of epochs to train the model for.
+
+    Returns:
+        None
+    """
 
     if not os.path.isdir(SAVE_MODEL_PATH):
         os.mkdir(SAVE_MODEL_PATH)
@@ -78,9 +98,15 @@ def train_model(encoder_name, data_loaders, glove_embeddings,
 
         if best_accuracy < validation_acc:
             torch.save(
-                encoder, os.path.join(SAVE_MODEL_PATH, encoder_name) + ".pt")
+                encoder,
+                os.path.join(SAVE_MODEL_PATH, encoder_name) + ".pt"
+            )
             torch.save(
-                classifier, os.path.join(SAVE_MODEL_PATH, f"{encoder_name}_classifier") + ".pt")
+                classifier,
+                os.path.join(
+                    SAVE_MODEL_PATH, f"{encoder_name}_classifier"
+                ) + ".pt"
+            )
             best_accuracy = validation_acc
 
         if validation_acc < last_validation_accuracy:

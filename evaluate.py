@@ -18,12 +18,34 @@ logging.basicConfig(format="%(asctime)s : %(message)s", level=logging.DEBUG)
 
 
 def prepare(params, samples):
+    """
+    Prepare the parameters for the SentEval evaluation.
+
+    Args:
+        params (object): Object containing evaluation parameters.
+        samples (list): List of samples for evaluation.
+
+    Returns:
+        None
+    """
+
     params.word_vec = glove_mapping
     params.embedding_dim = 300
     return
 
 
 def batcher(params, batch):
+    """
+    Batch the input sentences and generate embeddings using an encoder model.
+
+    Args:
+        params (object): Object containing evaluation parameters.
+        batch (list): List of input sentences to batch.
+
+    Returns:
+        numpy array: Array of embeddings for the input sentences.
+    """
+
     batch = [sent if sent != [] else ["."] for sent in batch]
     embeddings = torch.tensor([]).to(device)
 
@@ -42,6 +64,18 @@ def batcher(params, batch):
 
 
 def get_nli_accuracy(batch_size, num_workers):
+    """
+    Calculate the accuracy for the NLI task on the test dataset.
+
+    Args:
+        batch_size (int): Number of examples in each batch.
+        num_workers (int): Number of workers to use for data loading.
+
+    Returns:
+        float: Accuracy of the natural language inference model on the test
+               dataset.
+    """
+
     test_dataset = SNLIDataset("test", glove_mapping)
 
     test_loader = DataLoader(
@@ -57,6 +91,16 @@ def get_nli_accuracy(batch_size, num_workers):
 
 
 def senteval_results(params_senteval):
+    """
+    Evaluate the performance of a sentence encoder on the SentEval benchmark.
+
+    Args:
+        params_senteval (object): Object containing SentEval parameters.
+
+    Returns:
+        tuple: Tuple containing the micro and macro average accuracies.
+    """
+
     se = senteval.engine.SE(params_senteval, batcher, prepare)
 
     transfer_tasks = ["MR", "CR", "MPQA", "SUBJ", "SST2", "TREC",

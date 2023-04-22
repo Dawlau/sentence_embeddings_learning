@@ -13,6 +13,25 @@ def end_to_end_model_train(checkpoint_path, batch_size, encoder_name, lr,
                            weight_decay, num_epochs, hidden_size,
                            encoder_output_size,
                            lstm_bidirectional, num_workers):
+    """
+    Train a model end-to-end on the SNLI dataset.
+
+    Args:
+        checkpoint_path (str): Path to load model checkpoint.
+        batch_size (int): Number of examples in each training batch.
+        encoder_name (str): Name of the encoder model to use.
+        lr (float): Learning rate for the optimizer.
+        weight_decay (float): Weight decay applied to the learning rate.
+        num_epochs (int): Number of epochs to train for.
+        hidden_size (int): Size of the hidden layer in the LSTM encoder.
+        encoder_output_size (int): Size of the encoder output.
+        lstm_bidirectional (bool): Whether to use a bidirectional LSTM.
+        num_workers (int): Number of workers to use for data loading.
+
+    Returns:
+        None
+    """
+    
     glove_vocab_index_mapping = get_glove_vocab_index_mapping(GLOVE_PATH)
     glove_embeddings = get_glove_embeddings(GLOVE_PATH)
 
@@ -50,7 +69,7 @@ parser = argparse.ArgumentParser(
     description="Hyperparameters used for training")
 
 parser.add_argument("--checkpoint_path", type=str, default=None,
-                    help="Pre-trained model path if you want to resume training")
+                    help="Pre-trained model path for resuming training")
 
 parser.add_argument("--batch_size", type=int, default=64,
                     help="Batch size used for data loading")
