@@ -117,7 +117,7 @@ def senteval_results(params_senteval):
 
     micro_acc = sum([
         senteval_results[task]["devacc"] *
-        (senteval_results[task]["devacc"]) / num_dev_samples
+        (senteval_results[task]["ndev"]) / num_dev_samples
         for task in transfer_tasks
     ])
 
