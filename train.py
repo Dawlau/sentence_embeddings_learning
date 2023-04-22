@@ -93,13 +93,3 @@ end_to_end_model_train(
     num_workers=args.num_workers,
     hidden_size=args.hidden_size
 )
-
-# re-train
-# implement evaluate script (test snli + senteval)
-# report test acc
-# readme
-# upload models + tensorboard runs
-# notebook (be able to load model + do inference on 2 sentences)
-# error analysis...
-# add comments to code pls
-# fix pep8

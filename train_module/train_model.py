@@ -9,7 +9,6 @@ import torch
 
 SAVE_MODEL_PATH = os.path.join("saved_models")
 device = "cuda" if torch.cuda.is_available() else "cpu"
-device = "cpu"
 
 
 def train_model(encoder_name, data_loaders, glove_embeddings,
