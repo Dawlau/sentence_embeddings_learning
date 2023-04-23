@@ -153,6 +153,9 @@ encoder.to(device)
 classifier = torch.load(args.classifier_checkpoint_path, map_location=device)
 classifier.to(device)
 
+encoder.eval()
+classifier.eval()
+
 nli_acc = get_nli_accuracy(
     batch_size=args.batch_size,
     num_workers=args.num_workers
@@ -177,5 +180,5 @@ params_senteval["classifier"] = {
 micro_acc, macro_acc = senteval_results(params_senteval)
 
 print("NLI task test accuracy: ", round(nli_acc.item() * 100, 2))
-print("Senteval micro accuracy: ", round(micro_acc * 100, 2))
+print("Senteval micro accuracy: ", round(micro_acc, 2))
 print("Senteval macro accuracy: ", round(macro_acc, 2))
